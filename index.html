@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AWS Serverless Framework serverless.yml Lesson</title>
+  <style>
+    :root{--bg:#f8fafc;--paper:#fff;--ink:#172033;--muted:#526070;--brand:#2563eb;--brand2:#0f766e;--line:#dbe3ef;--code:#0f172a;--codeText:#e2e8f0;--warn:#fff7ed;--ok:#ecfdf5;--info:#eff6ff;--shadow:0 18px 45px rgba(15,23,42,.10)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#eef6ff 0,var(--bg) 420px);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.65}a{color:var(--brand);text-decoration:none}a:hover{text-decoration:underline}header{padding:4rem 1.25rem 3rem;background:radial-gradient(circle at top left,#dbeafe,transparent 35%),linear-gradient(135deg,#1e3a8a,#0f766e);color:white}header .hero{max-width:1180px;margin:auto}header h1{font-size:clamp(2.2rem,5vw,4.8rem);line-height:1.05;margin:.5rem 0}header p{font-size:1.15rem;max-width:850px}.badge{display:inline-flex;gap:.5rem;align-items:center;padding:.35rem .75rem;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(255,255,255,.12)}#progress{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,#60a5fa,#34d399);width:0;z-index:20}.layout{max-width:1380px;margin:auto;display:grid;grid-template-columns:310px minmax(0,1fr);gap:1.5rem;padding:1.5rem}nav{position:sticky;top:1rem;align-self:start;max-height:calc(100vh - 2rem);overflow:auto;background:rgba(255,255,255,.86);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:18px;padding:1rem;box-shadow:var(--shadow)}nav h2{font-size:1rem;margin:.2rem 0 1rem}nav ol{list-style:none;padding:0;margin:0;display:grid;gap:.25rem}nav a{display:block;padding:.45rem .65rem;border-radius:10px;color:#24405f;font-size:.93rem}nav a.active,nav a:hover{background:#e0f2fe;text-decoration:none;color:#0f3b75}main{min-width:0}.chapter{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:clamp(1rem,3vw,2.2rem);margin-bottom:1.5rem;box-shadow:var(--shadow);scroll-margin-top:1rem}.chapter:target{outline:4px solid #bfdbfe}.chapter h2{font-size:clamp(1.7rem,3vw,2.6rem);line-height:1.15;margin-top:0}.chapter h3{font-size:1.35rem;margin-top:2rem}.chapter h4{margin-bottom:.3rem}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}.card,.callout,aside{border:1px solid var(--line);border-radius:16px;padding:1rem;background:#fbfdff}.callout.info{background:var(--info);border-color:#bfdbfe}.callout.warn{background:var(--warn);border-color:#fed7aa}.callout.good{background:var(--ok);border-color:#a7f3d0}.diagram{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#f1f5f9;border:1px dashed #94a3b8;border-radius:16px;padding:1rem;overflow:auto;white-space:pre;color:#0f172a}.code-wrap{position:relative;margin:1rem 0}.code-wrap pre{margin:0;background:var(--code);color:var(--codeText);padding:1.1rem;border-radius:16px;overflow:auto;border:1px solid #1e293b}.code-wrap code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.92rem}.copy{position:absolute;top:.55rem;right:.55rem;border:1px solid #475569;background:#1e293b;color:white;border-radius:9px;padding:.35rem .55rem;cursor:pointer}.copy.done{background:#047857}table{border-collapse:collapse;width:100%;margin:1rem 0;background:white}th,td{border:1px solid var(--line);padding:.65rem;text-align:left}th{background:#f1f5f9}details{border:1px solid var(--line);border-radius:14px;padding:.8rem 1rem;margin:1rem 0;background:#fff}summary{cursor:pointer;font-weight:700}.chapter-nav{display:flex;justify-content:space-between;gap:1rem;margin-top:2rem}.chapter-nav a{border:1px solid var(--line);padding:.7rem 1rem;border-radius:999px;background:#f8fafc}.quiz li{margin:.5rem 0}footer{text-align:center;color:var(--muted);padding:3rem 1rem}@media(max-width:900px){.layout{grid-template-columns:1fr;padding:.8rem}nav{position:relative;top:auto;max-height:none}.grid{grid-template-columns:1fr}}@media print{#progress,nav,.copy,.chapter-nav{display:none}body{background:white;color:black}.layout{display:block;padding:0}.chapter{box-shadow:none;border:0;page-break-inside:avoid}.code-wrap pre{white-space:pre-wrap;background:#f4f4f4;color:#111;border:1px solid #aaa}header{background:white;color:black;padding:1rem}}
+  </style>
+</head>
+<body>
+<div id="progress"></div>
+<header>
+  <div class="hero">
+    <span class="badge">AWS • Lambda • SQS • SNS • Serverless Framework</span>
+    <h1>Beginner-Friendly Lesson: AWS Serverless Framework and <code>serverless.yml</code></h1>
+    <p>Learn how production serverless systems are designed with Lambda functions, queues, topics, event-driven architecture, IAM permissions, monitoring, and deployment automation. This single self-contained HTML file works offline in any modern browser.</p>
+  </div>
+</header>
+<div class="layout">
+<nav aria-label="Table of contents">
+  <h2>Sticky Table of Contents</h2>
+  <ol id="toc">
+    <li><a href="#chapter-1">1. Serverless Computing</a></li><li><a href="#chapter-2">2. Serverless Framework</a></li><li><a href="#chapter-3">3. serverless.yml</a></li><li><a href="#chapter-4">4. Anatomy</a></li><li><a href="#chapter-5">5. Functions</a></li><li><a href="#chapter-6">6. Events</a></li><li><a href="#chapter-7">7. SQS Deep Dive</a></li><li><a href="#chapter-8">8. SNS Deep Dive</a></li><li><a href="#chapter-9">9. Resources</a></li><li><a href="#chapter-10">10. Environment</a></li><li><a href="#chapter-11">11. IAM</a></li><li><a href="#chapter-12">12. Variables & Stages</a></li><li><a href="#chapter-13">13. Production Project</a></li><li><a href="#chapter-14">14. Deployment</a></li><li><a href="#chapter-15">15. Monitoring</a></li><li><a href="#chapter-16">16. Troubleshooting</a></li><li><a href="#chapter-17">17. Best Practices</a></li><li><a href="#chapter-18">18. Final Exercise</a></li>
+  </ol>
+</nav>
+<main>
+<section class="chapter" id="chapter-1"><article><h2>Chapter 1: Introduction to Serverless Computing</h2>
+<p>Serverless computing is a way to build applications without managing long-running servers yourself. The word <em>serverless</em> does not mean there are no servers. It means that the cloud provider operates the servers, patches the operating systems, manages capacity, replaces unhealthy machines, and exposes higher-level services that you compose. A traditional web application often begins with a virtual machine, a web server, a process manager, a deployment script, a firewall, and monitoring. A serverless application begins with events, functions, permissions, and managed data services.</p>
+<p>In the traditional model, teams plan instance sizes, install runtime versions, configure load balancers, and decide how many machines should be running at 2 p.m. and at 2 a.m. When traffic grows, the team adds capacity; when traffic falls, unused capacity may still cost money. In a serverless model, you describe what should happen when an event occurs. AWS Lambda runs code when requested. Amazon SQS stores messages until a worker is ready. Amazon SNS broadcasts a notification to many subscribers. DynamoDB stores data without requiring you to administer database servers. CloudWatch records logs and metrics. EventBridge routes business events between systems.</p>
+<div class="diagram">Browser or Service
+       |
+       v
+Managed AWS Event Source
+       |
+       v
+Lambda Function
+       |
+       v
+Managed Data, Queue, Topic, or API</div>
+<p>Event-driven computing is the heart of serverless design. Instead of one service directly waiting for another service to finish, one service emits an event such as <strong>OrderCreated</strong>, <strong>PaymentCaptured</strong>, or <strong>FileUploaded</strong>. Other components react independently. This produces systems that are easier to scale, easier to extend, and often more resilient because temporary failures can be retried through queues.</p>
+<div class="grid"><div class="card"><h3>Benefits</h3><p><strong>Scalability:</strong> Lambda can scale by running more concurrent executions, SQS can buffer spikes, and SNS can fan out events. <strong>Reduced costs:</strong> many services charge based on requests, duration, storage, or messages rather than idle servers. <strong>Faster deployment:</strong> infrastructure can be described as code. <strong>Reduced maintenance:</strong> AWS handles many operational tasks.</p></div><div class="card"><h3>Common AWS services</h3><p><strong>Lambda</strong> runs code. <strong>API Gateway</strong> exposes HTTP APIs. <strong>SQS</strong> queues work. <strong>SNS</strong> publishes notifications. <strong>DynamoDB</strong> stores records. <strong>CloudWatch</strong> observes systems. <strong>EventBridge</strong> routes events by pattern. These services are building blocks, not a full architecture by themselves.</p></div></div>
+<p>For beginners, the most important mental shift is to stop thinking about a single program that controls everything. Think in small capabilities. One Lambda validates an HTTP request. Another Lambda consumes a queue. A topic announces a business fact. A database table records durable state. Each component has a clear responsibility and communicates through well-defined events.</p>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>What does serverless really remove from your daily work?<details><summary>Show answer</summary><p>It removes most server management tasks, not the physical servers themselves.</p></details></li><li>Why are events important?<details><summary>Show answer</summary><p>Events let services communicate through facts and triggers instead of tight, synchronous dependencies.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Serverless means managed infrastructure and event-driven building blocks.</li><li>Lambda, SQS, SNS, DynamoDB, API Gateway, CloudWatch, and EventBridge commonly work together.</li><li>Production systems still need security, monitoring, failure handling, and cost awareness.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><span></span><a href="#chapter-2">Next →</a></div></article></section>
+<section class="chapter" id="chapter-2"><article><h2>Chapter 2: Understanding the Serverless Framework</h2>
+<p>The Serverless Framework is a developer tool that turns a project directory and a <code>serverless.yml</code> file into deployed cloud infrastructure. It packages your functions, creates or updates AWS CloudFormation stacks, configures event sources, and helps you run common commands. You can think of it as a convenient layer over infrastructure as code and deployment automation.</p>
+<p>Without a framework, you would need to manually create Lambda functions, IAM roles, API Gateway routes, SQS event source mappings, SNS subscriptions, log groups, and output values. Manual setup is educational once, but it becomes risky when repeated. A missed permission or a differently named queue can break a deployment. The Serverless Framework keeps the desired state in a file that can be reviewed, versioned, and deployed consistently.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-bash">npm install -g serverless</code></pre></div>
+<p>This command uses npm to install the Serverless Framework command line tool globally. Globally means the <code>serverless</code> command is available from your terminal in many directories. In production teams, you may also pin the framework version in project tooling so every developer and continuous integration job uses the same major version.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-bash">serverless --version</code></pre></div>
+<p>This command checks that the tool is installed and prints the installed version. Version awareness matters because framework syntax and plugin behavior can change between major releases. In this lesson, examples use a modern <code>frameworkVersion: '4'</code> style and Node.js 22 Lambda runtime examples.</p>
+<div class="callout info"><strong>Infrastructure as Code:</strong> The point is not merely typing fewer console clicks. The point is repeatability. A pull request can show that you added a queue, changed a timeout, or introduced an IAM permission before it reaches production.</div>
+<p>Deployment automation is especially useful for event-driven systems because every connection has two sides. If an SQS queue triggers a Lambda, AWS needs the queue, the function, an event source mapping, and permissions. If an SNS topic invokes a Lambda, AWS needs the topic, subscription, Lambda permission, and often logging and retry configuration. The Serverless Framework can generate the supporting CloudFormation for common cases while still allowing you to define raw CloudFormation resources when you need more control.</p>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>What problem does the Serverless Framework solve?<details><summary>Show answer</summary><p>It automates packaging, CloudFormation deployment, and event source configuration from a project file.</p></details></li><li>Why should teams avoid clicking resources together manually?<details><summary>Show answer</summary><p>Manual resources drift from source control and are hard to reproduce across stages.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Serverless Framework deploys functions and managed AWS resources from configuration.</li><li>It improves repeatability and reviewability.</li><li>Pin versions and understand generated resources before using examples in production.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-1">← Previous</a><a href="#chapter-3">Next →</a></div></article></section>
+<section class="chapter" id="chapter-3"><article><h2>Chapter 3: Introduction to serverless.yml</h2>
+<p><code>serverless.yml</code> is the central configuration file for a Serverless Framework service. It describes the service name, framework version, provider settings, functions, events, environment variables, IAM permissions, plugins, packaging rules, and CloudFormation resources. Beginners should treat it as both a deployment recipe and a living architecture document.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-text">project/
+├── src/
+│   ├── handlers/
+│   └── services/
+├── serverless.yml
+├── package.json
+└── README.md</code></pre></div>
+<p>The project structure above separates handler files from business services. A handler is the thin Lambda entry point that receives an AWS event. A service module contains reusable business logic such as validating an order, calculating totals, writing to DynamoDB, or publishing to SNS. This separation makes unit testing easier and keeps the deployment configuration understandable.</p>
+<p>A small service can have one <code>serverless.yml</code>. A larger system might have several services, each with its own deployment boundary. For example, an order API service may own HTTP routes and the orders table, while an analytics service may subscribe to events and write reports. Boundaries should follow ownership and lifecycle. If two functions must always deploy together and share the same table, they may belong in one service. If they are owned by different teams and change independently, separate services are safer.</p>
+<div class="callout good"><strong>Beginner rule:</strong> Read <code>serverless.yml</code> from top to bottom and ask: What is this service called? Which AWS account and region will receive it? Which functions will run? Which events trigger them? Which resources will be created? Which permissions are granted?</div>
+<p>YAML is whitespace-sensitive. Indentation creates hierarchy. Two spaces are common. Tabs should be avoided. A tiny indentation error can move an event outside a function or place a property under the wrong parent. Use an editor with YAML validation and commit small changes so problems are easier to find.</p>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>What does serverless.yml represent?<details><summary>Show answer</summary><p>It is the central service and infrastructure configuration for deployment.</p></details></li><li>Why split handlers and services?<details><summary>Show answer</summary><p>Handlers stay small while business logic becomes reusable and testable.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>serverless.yml is the deployment recipe and architecture map.</li><li>Project organization matters for testability and maintainability.</li><li>YAML indentation is part of the syntax, so formatting discipline is essential.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-2">← Previous</a><a href="#chapter-4">Next →</a></div></article></section>
+<section class="chapter" id="chapter-4"><article><h2>Chapter 4: Anatomy of serverless.yml</h2>
+<p>A useful <code>serverless.yml</code> starts with high-level identity, then provider defaults, then functions and resources. The <code>service</code> name becomes part of generated stack names and resource names, so choose something stable and meaningful.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">service: order-service
+frameworkVersion: &#x27;4&#x27;
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: us-east-1
+  stage: dev
+  timeout: 10
+  memorySize: 256
+  architecture: arm64</code></pre></div>
+<p><strong>service</strong> names the deployable unit. <strong>frameworkVersion</strong> helps prevent accidental deployments with incompatible CLI versions. <strong>provider.name</strong> selects AWS. <strong>runtime</strong> chooses the Lambda language environment. <strong>region</strong> selects where resources are created. <strong>stage</strong> names the environment, such as <code>dev</code>, <code>staging</code>, or <code>prod</code>. <strong>timeout</strong> defines maximum function runtime in seconds unless overridden per function. <strong>memorySize</strong> controls available memory and proportionally influences CPU. <strong>architecture</strong> can be <code>arm64</code> or <code>x86_64</code>; arm64 is often cost-effective, but native dependencies must support it.</p>
+<p>Provider defaults reduce repetition, but production services often override settings for specific functions. A public HTTP function may need a short timeout so clients are not left waiting. A batch worker may need more memory or a longer timeout. A scheduled cleanup job may have different environment variables. The default is a starting point, not a prison.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  createOrder:
+    handler: src/orders/create.handler
+    timeout: 6
+    memorySize: 512
+  processOrder:
+    handler: src/orders/process.handler
+    timeout: 60
+    memorySize: 1024</code></pre></div>
+<div class="callout warn"><strong>Production warning:</strong> A high global timeout can hide slow code and cause expensive retries. Set timeouts intentionally. For SQS-triggered Lambdas, coordinate Lambda timeout and queue visibility timeout so the message does not reappear while still being processed.</div>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>What does stage normally represent?<details><summary>Show answer</summary><p>An environment such as dev, staging, or prod.</p></details></li><li>Why might functions override provider defaults?<details><summary>Show answer</summary><p>Different triggers and workloads need different memory, timeout, and environment settings.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>The top of serverless.yml identifies the service and provider defaults.</li><li>Runtime, region, stage, timeout, memory, and architecture shape deployed behavior.</li><li>Defaults should be intentional and overridden where workloads differ.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-3">← Previous</a><a href="#chapter-5">Next →</a></div></article></section>
+<section class="chapter" id="chapter-5"><article><h2>Chapter 5: Functions Deep Dive</h2>
+<p>An AWS Lambda function is a small unit of compute that runs in response to an event. The event may be an HTTP request, a queue message, an SNS notification, a schedule, an S3 object creation, or a custom EventBridge event. Lambda creates execution environments as needed, invokes your handler, captures logs, and returns a response to the event source when appropriate.</p>
+<p>Lambda functions are stateless from the architecture perspective. You should not rely on local memory or local disk to contain durable business state. AWS may reuse an execution environment for performance, so cached clients can help, but the function must still work if started cold with no previous memory. Durable state belongs in a database, queue, object store, or another managed service.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  hello:
+    handler: src/handlers/hello.handler</code></pre></div>
+<p>The function key <code>hello</code> is the logical name inside the service. The handler path <code>src/handlers/hello.handler</code> means the file is <code>src/handlers/hello.js</code> in a JavaScript project and the exported function is named <code>handler</code>. The Serverless Framework packages the code and tells Lambda which module export to call.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-javascript">export const handler = async () =&gt; {
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: &#x27;Hello World&#x27;
+    })
+  };
+};</code></pre></div>
+<p><code>export</code> makes the function available to Lambda's module loader. <code>async</code> lets the handler use <code>await</code> for promises such as database writes or SDK calls. The return value shown is an HTTP-style response: status code plus a JSON string body. For non-HTTP events, the return value may be ignored or interpreted differently. For SQS, success means the batch can be deleted; throwing an error means messages may be retried.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  createOrder:
+    handler: src/orders/create.handler
+
+  getOrder:
+    handler: src/orders/get.handler
+
+  deleteOrder:
+    handler: src/orders/delete.handler</code></pre></div>
+<p>Multiple functions should be organized around responsibilities. A create-order HTTP function validates input and starts the workflow. A get-order function reads the database. A delete-order function may mark an order canceled rather than physically delete it. A process-order worker consumes queue messages and performs slow work. Separating these concerns improves security because each function can receive only the permissions it needs.</p>
+<p>The Lambda execution lifecycle has several phases. During initialization, the runtime loads your module and creates top-level objects. During invocation, Lambda passes an event and context object to your handler. After the handler resolves or rejects, Lambda freezes or reuses the environment. Cold starts happen when AWS must create a new environment. You can reduce cold-start impact by keeping packages small, avoiding heavy initialization, and choosing appropriate memory.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-javascript">import { SNSClient, PublishCommand } from &#x27;@aws-sdk/client-sns&#x27;;
+const sns = new SNSClient({}); // safe to reuse across invocations
+
+export const handler = async (event) =&gt; {
+  const order = JSON.parse(event.body || &#x27;{}&#x27;);
+  await sns.send(new PublishCommand({
+    TopicArn: process.env.ORDER_TOPIC_ARN,
+    Message: JSON.stringify({ type: &#x27;OrderCreated&#x27;, order })
+  }));
+  return { statusCode: 202, body: JSON.stringify({ accepted: true }) };
+};</code></pre></div>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>What is a Lambda handler?<details><summary>Show answer</summary><p>The exported function AWS Lambda invokes for a configured function.</p></details></li><li>Why should handlers stay small?<details><summary>Show answer</summary><p>Small handlers isolate AWS event translation while business logic remains reusable and testable.</p></details></li><li>What does throwing from an SQS handler usually cause?<details><summary>Show answer</summary><p>The message batch is not deleted and can be retried after visibility timeout.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Lambda functions run in response to events and should be stateless.</li><li>The handler path connects serverless.yml to exported code.</li><li>Use separate functions for separate responsibilities and permissions.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-4">← Previous</a><a href="#chapter-6">Next →</a></div></article></section>
+<section class="chapter" id="chapter-6"><article><h2>Chapter 6: Events and Event-Driven Architecture</h2>
+<p>Events are signals that something happened. In the Serverless Framework, the <code>events</code> section under a function tells AWS what should trigger that function. A single function can have multiple events, but production designs usually keep triggers focused. Event-driven architecture replaces direct orchestration with event publication and reaction.</p>
+<div class="diagram">Command: Create Order
+       |
+       v
+Order API Lambda records intent
+       |
+       v
+Event: OrderCreated
+       |
+       +--> Payment workflow
+       +--> Email notification
+       +--> Analytics update</div>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  listOrders:
+    handler: src/orders/list.handler
+    events:
+      - httpApi:
+          path: /orders
+          method: get</code></pre></div>
+<p>An HTTP API event creates an API Gateway route. When a browser or client sends <code>GET /orders</code>, API Gateway invokes the Lambda. HTTP functions should validate input, authenticate callers, and return clear status codes. They should not perform long background work while the client waits if that work can be queued.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  cleanupExpiredOrders:
+    handler: src/orders/cleanup.handler
+    events:
+      - schedule: rate(5 minutes)</code></pre></div>
+<p>Scheduled events run on a timer. They are useful for cleanup, reconciliation, polling a third-party API, or publishing reminders. Production scheduled jobs should be idempotent because retries or overlapping work can occur.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  processUpload:
+    handler: src/uploads/process.handler
+    events:
+      - s3:
+          bucket: uploads
+          event: s3:ObjectCreated:*</code></pre></div>
+<p>S3 events invoke code when objects change. They are common for image processing, data imports, and document workflows. Avoid writing processed files back to the same prefix without filters, or you can accidentally trigger recursive processing.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  handleOrderEvent:
+    handler: src/events/order.handler
+    events:
+      - eventBridge:
+          pattern:
+            source:
+              - app.orders</code></pre></div>
+<p>EventBridge is a routing layer for events. A pattern can match source, detail type, account, region, or fields inside the detail object. It is excellent for domain events that may cross service boundaries. SNS is often used for high-throughput fan-out and direct subscriber delivery; EventBridge is often used for event bus routing, SaaS integration, and rule-based filtering.</p>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>When should you queue work instead of doing it in an HTTP request?<details><summary>Show answer</summary><p>When the work is slow, retryable, or not needed before responding to the client.</p></details></li><li>What is a risk with S3 triggers?<details><summary>Show answer</summary><p>Recursive triggers if outputs are written where they match the same event rule.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Events connect AWS services to Lambda functions.</li><li>HTTP, schedule, S3, and EventBridge triggers serve different use cases.</li><li>Design events as business facts and consumers as independent reactions.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-5">← Previous</a><a href="#chapter-7">Next →</a></div></article></section>
+<section class="chapter" id="chapter-7"><article><h2>Chapter 7: Amazon SQS Deep Dive</h2>
+<p>Amazon Simple Queue Service, or SQS, is a managed message queue. A queue stores messages from producers until consumers are ready to process them. This simple idea solves many production problems. If order creation receives a sudden traffic spike, the API Lambda can place messages in SQS quickly and return to customers. Worker Lambdas can process messages at a controlled pace. If a downstream database is briefly slow, messages remain in the queue instead of being lost.</p>
+<div class="diagram">Producer
+   | sends message
+   v
+SQS Queue
+   | polled by Lambda event source mapping
+   v
+Consumer Lambda
+   | writes result
+   v
+Database or external service</div>
+<p>SQS decouples services in time. The producer does not need the consumer to be online at the exact same moment. It also decouples scaling. The producer may handle short bursts while the consumer scales based on backlog. This is a core production pattern for serverless systems because Lambda can scale quickly, but every downstream system still has limits. Queues provide backpressure.</p>
+<h3>Queue types</h3><p><strong>Standard queues</strong> provide very high throughput, at-least-once delivery, and best-effort ordering. At-least-once means a message can occasionally be delivered more than once, so consumers must be idempotent. Best-effort ordering means messages usually arrive in order, but strict ordering is not guaranteed. <strong>FIFO queues</strong> provide strict ordering within a message group and deduplication support. FIFO is useful when sequence matters, such as ledger updates, but it has different throughput characteristics and requires <code>.fifo</code> queue names.</p>
+<table><thead><tr><th>Feature</th><th>Standard</th><th>FIFO</th></tr></thead><tbody><tr><td>Ordering</td><td>Best effort</td><td>Guaranteed within message group</td></tr><tr><td>Throughput</td><td>Very high</td><td>Lower or partitioned by groups</td></tr><tr><td>Duplication</td><td>Possible</td><td>Controlled with deduplication</td></tr><tr><td>Use case</td><td>Most background jobs</td><td>Ordered workflows and ledgers</td></tr></tbody></table>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">resources:
+  Resources:
+    OrdersQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: orders-queue</code></pre></div>
+<p>The <code>resources</code> section passes raw CloudFormation into the deployment. <code>OrdersQueue</code> is the logical ID inside the CloudFormation template. <code>Type: AWS::SQS::Queue</code> tells AWS which resource to create. <code>QueueName</code> sets the physical name. In real systems, include the stage in names so dev and prod do not collide.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  processOrders:
+    handler: src/orders/process.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - OrdersQueue
+              - Arn
+          batchSize: 10</code></pre></div>
+<p>When Lambda is triggered by SQS, AWS creates an event source mapping. That mapping polls the queue, receives messages, invokes the Lambda with a batch, and deletes successfully processed messages. Your function does not usually call <code>DeleteMessage</code> directly when using the managed event source mapping; Lambda handles deletion after successful processing. If your handler throws, messages stay in the queue and become visible again after the visibility timeout.</p>
+<p><strong>Batch processing</strong> controls how many messages are delivered in one invocation. A batch size of 10 can reduce cost because one invocation handles ten messages, but it also means an error can affect the whole batch unless partial batch response is configured. Production workers should consider partial failures, idempotency keys, and per-record error handling.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-javascript">export const handler = async (event) =&gt; {
+  for (const record of event.Records) {
+    const message = JSON.parse(record.body);
+    await processOrder(message);
+  }
+};
+
+async function processOrder(message) {
+  console.log(&#x27;Processing order&#x27;, message.orderId);
+  // Validate, write durable status, call downstream services safely.
+}</code></pre></div>
+<h3>Visibility timeout</h3><p>Visibility timeout is the period during which a received message is hidden from other consumers. Imagine a worker receives an order message and needs 20 seconds to process it. If the visibility timeout is 30 seconds, no other worker sees it during normal processing. If the worker crashes, the timeout expires and another worker can retry. If the visibility timeout is too short, two workers may process the same message concurrently. If it is too long, failed messages take too long to retry.</p>
+<div class="diagram">T0: message received and hidden
+T0-T30: worker processes message
+Success before T30: Lambda deletes message
+Failure or timeout: message becomes visible again after T30</div>
+<h3>Dead letter queues</h3><p>A dead letter queue, or DLQ, stores messages that repeatedly fail. Without a DLQ, a poison message can be retried forever and consume capacity. With a DLQ, operations teams can inspect failed payloads, fix bugs, replay messages, or contact affected customers. A redrive policy connects the main queue to the DLQ and sets a maximum receive count.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">resources:
+  Resources:
+    OrdersDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: orders-dlq-${self:provider.stage}
+    OrdersQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: orders-queue-${self:provider.stage}
+        VisibilityTimeout: 90
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt:
+              - OrdersDeadLetterQueue
+              - Arn
+          maxReceiveCount: 5</code></pre></div>
+<p><code>deadLetterTargetArn</code> points to the DLQ. <code>maxReceiveCount: 5</code> means SQS moves the message to the DLQ after it has been received and failed enough times. Choose this number based on how transient your failures are. A temporary database timeout may deserve several retries. A malformed message will never succeed until code or data changes.</p>
+<h3>Real-world order processing system</h3><div class="diagram">Customer
+   | POST /orders
+API Gateway
+   | invokes
+CreateOrder Lambda
+   | SendMessage
+SQS Orders Queue
+   | batch poll
+Worker Lambda
+   | PutItem / UpdateItem
+DynamoDB Orders Table</div>
+<p>In this lifecycle, the customer submits an order and receives a fast <code>202 Accepted</code> response. The API Lambda validates the request, creates an order ID, stores an initial record or sends a message, and returns. The queue absorbs traffic. The worker Lambda processes payment checks, inventory reservations, or fulfillment tasks. The database records status transitions such as <code>PENDING</code>, <code>PROCESSING</code>, <code>COMPLETED</code>, or <code>FAILED</code>. If the worker fails, SQS retries. If the message keeps failing, the DLQ preserves it for investigation.</p>
+<p>Production SQS consumers should be idempotent. If the same message is delivered twice, processing it twice should not charge the customer twice or ship two packages. Use a business key such as <code>orderId</code>, conditional writes in DynamoDB, or a processed-events table. Log message IDs and correlation IDs. Alarm on visible message age, DLQ depth, and Lambda errors. These practices turn a simple queue into a reliable operational workflow.</p>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>What delivery guarantee does a Standard SQS queue provide?<details><summary>Show answer</summary><p>At-least-once delivery with best-effort ordering.</p></details></li><li>What does visibility timeout protect against?<details><summary>Show answer</summary><p>It hides a message while a consumer processes it, then allows retry if processing fails.</p></details></li><li>Why use a DLQ?<details><summary>Show answer</summary><p>To isolate repeatedly failing messages for investigation instead of retrying forever.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>SQS decouples producers and consumers through durable asynchronous messages.</li><li>Standard queues favor throughput; FIFO queues favor ordering and deduplication.</li><li>Visibility timeout, batch size, DLQs, idempotency, and alarms are production essentials.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-6">← Previous</a><a href="#chapter-8">Next →</a></div></article></section>
+<section class="chapter" id="chapter-8"><article><h2>Chapter 8: Amazon SNS Deep Dive</h2>
+<p>Amazon Simple Notification Service, or SNS, is a managed publish/subscribe service. A publisher sends one message to a topic. SNS then delivers that message to every subscribed endpoint. This is called fan-out. SNS is perfect when one business event should cause several independent reactions. For example, <strong>OrderCreated</strong> may need to email a customer, notify inventory, update analytics, and start fraud checks. The order service should not need to know how every downstream team works.</p>
+<div class="diagram">Publisher
+    | Publish
+    v
+SNS Topic
+  /   |    \
+ v    v     v
+Email Lambda SQS</div>
+<p>A topic is a named communication channel. Publishers do not send directly to subscribers; they publish to the topic ARN. Subscribers can be Lambda functions, email addresses, SMS numbers, HTTP endpoints, mobile push endpoints, or SQS queues. SNS handles delivery attempts according to endpoint type and configuration.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">resources:
+  Resources:
+    UserEventsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: user-events</code></pre></div>
+<p>The CloudFormation resource above creates a topic. The logical ID is <code>UserEventsTopic</code>. The resource type is <code>AWS::SNS::Topic</code>. <code>TopicName</code> controls the topic name. In production, include the stage or service name to avoid collisions and to make dashboards clear.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  processUserEvent:
+    handler: src/users/process.handler
+    events:
+      - sns:
+          arn:
+            Ref: UserEventsTopic</code></pre></div>
+<p>A Lambda SNS subscription invokes a function whenever the topic receives a message. <code>Ref: UserEventsTopic</code> resolves to the topic ARN in this context. The function receives an event containing <code>Records</code>, each with SNS metadata and the message body. Consumers should parse the message, validate the event type and version, then perform their work.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-javascript">export const handler = async (event) =&gt; {
+  for (const record of event.Records) {
+    const envelope = record.Sns;
+    const message = JSON.parse(envelope.Message);
+    console.log(&#x27;SNS message&#x27;, envelope.MessageId, message.type);
+    if (message.type === &#x27;UserRegistered&#x27;) {
+      await sendWelcomeEmail(message.detail);
+    }
+  }
+};</code></pre></div>
+<h3>SNS subscribers</h3><p><strong>Lambda</strong> subscribers are good for immediate compute reactions. <strong>Email</strong> subscribers are useful for human notifications but require confirmation and are not a replacement for transactional email systems at scale. <strong>SMS</strong> subscribers send text messages, but cost, compliance, and regional rules matter. <strong>HTTP endpoints</strong> let external systems receive messages after confirming subscription. <strong>SQS queues</strong> are the most important production subscriber type because they combine fan-out with buffering and independent retries.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">resources:
+  Resources:
+    OrderEventsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: order-events-${self:provider.stage}
+    EmailQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: email-events-${self:provider.stage}
+    AnalyticsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: analytics-events-${self:provider.stage}
+    EmailSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: OrderEventsTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt: [EmailQueue, Arn]
+    AnalyticsSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: OrderEventsTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt: [AnalyticsQueue, Arn]</code></pre></div>
+<h3>Fan-out pattern</h3><div class="diagram">                Order Created
+                      |
+                      v
+                 SNS Topic
+                /    |     \
+               /     |      \
+              v      v       v
+          Email   Analytics Inventory
+          Queue     Queue     Queue</div>
+<p>Enterprises use fan-out because it protects the publishing service from downstream complexity. The order service publishes one event and moves on. The email team owns email processing. The analytics team owns analytics processing. The inventory team owns stock reservation. Each subscriber can scale, retry, deploy, and fail independently. Adding a new subscriber should not require changing the publisher if the event contract already contains the needed information.</p>
+<h3>SNS + SQS pattern</h3><p>The SNS plus SQS pattern is one of the most reliable event-driven designs on AWS. SNS provides broadcasting. SQS provides buffering, retry control, DLQs, and independent consumer pace. If SNS directly invokes three Lambda functions and one function has a bug, that function's retry behavior is separate but there is no queue backlog to inspect in the same way. With SQS subscriptions, each consumer has its own queue and DLQ. A broken analytics worker does not block email delivery or inventory processing.</p>
+<div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">functions:
+  publishOrder:
+    handler: src/orders/create.handler
+    environment:
+      ORDER_TOPIC_ARN:
+        Ref: OrderEventsTopic
+
+  sendEmail:
+    handler: src/email/worker.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [EmailQueue, Arn]
+          batchSize: 5
+
+  updateAnalytics:
+    handler: src/analytics/worker.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [AnalyticsQueue, Arn]
+          batchSize: 10</code></pre></div>
+<p>Message filtering can reduce unnecessary delivery. A subscriber can request only events with attributes such as <code>eventType = OrderCreated</code>. Filtering saves cost and simplifies consumers, but do not rely on it as your only validation. Consumers should still check message type and version because event contracts evolve.</p>
+<h3>E-commerce notification walkthrough</h3><p>When an order is placed, the order API Lambda writes an order record and publishes <code>OrderCreated</code> to SNS. SNS receives the event and fans it out to an email queue, analytics queue, and inventory queue. The email worker sends a confirmation. The analytics worker updates metrics. The inventory worker reserves stock. If the email provider is temporarily down, only the email queue builds backlog. Inventory and analytics continue. If the inventory message repeatedly fails because a SKU is invalid, that message moves to the inventory DLQ for investigation. The order event remains a durable business fact that multiple teams can use.</p>
+<article class="quiz"><h3>Quick quiz</h3><ol><li>What is fan-out?<details><summary>Show answer</summary><p>Publishing one message to a topic so multiple subscribers receive it.</p></details></li><li>Why pair SNS with SQS?<details><summary>Show answer</summary><p>SNS broadcasts while SQS buffers, retries, and isolates each consumer.</p></details></li><li>Who should know all subscribers in a good event design?<details><summary>Show answer</summary><p>Ideally not the publisher; subscribers can be added without changing publisher code if the contract is sufficient.</p></details></li></ol></article>
+<aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>SNS implements publish/subscribe and fan-out.</li><li>Subscribers include Lambda, email, SMS, HTTP endpoints, and SQS queues.</li><li>SNS plus SQS is a production-grade pattern for scalable independent consumers.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-7">← Previous</a><a href="#chapter-9">Next →</a></div></article></section>
+<section class="chapter" id="chapter-9"><article><h2>Chapter 9: Resources Section</h2><p>The <code>resources</code> section lets you define AWS CloudFormation resources that are not fully described by simple function events. This is where you create DynamoDB tables, SQS queues, SNS topics, alarms, IAM policies, and other infrastructure. Serverless Framework merges this CloudFormation into the generated template.</p><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">resources:
+  Resources:
+    OrdersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: orders-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: orderId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: orderId
+            KeyType: HASH</code></pre></div><p>CloudFormation tracks resource creation, updates, and deletion as a stack. If you change the table name, AWS may need replacement. If you add a queue redrive policy, AWS updates the existing queue. Infrastructure as code means these changes are visible in source control. Production teams should understand which changes are destructive before deploying.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 9?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 9 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-8">← Previous</a><a href="#chapter-10">Next →</a></div></article></section>
+<section class="chapter" id="chapter-10"><article><h2>Chapter 10: Environment Variables</h2><p>Environment variables pass configuration into functions without hard-coding values. They are useful for table names, queue URLs, topic ARNs, feature flags, and stage-specific settings. They should not be treated as a complete secret-management strategy unless encrypted and controlled carefully.</p><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">provider:
+  environment:
+    TABLE_NAME: orders-${self:provider.stage}
+    QUEUE_URL:
+      Ref: OrdersQueue</code></pre></div><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-javascript">const tableName = process.env.TABLE_NAME;
+export const handler = async () =&gt; {
+  console.log(`Writing to ${tableName}`);
+};</code></pre></div><p>Best practice is to keep configuration explicit. If a function needs a topic ARN, put it in that function's environment or provider environment and grant matching IAM permissions. Avoid scattering literal names through code.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 10?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 10 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-9">← Previous</a><a href="#chapter-11">Next →</a></div></article></section>
+<section class="chapter" id="chapter-11"><article><h2>Chapter 11: IAM Permissions</h2><p>IAM controls what your functions can do. A Lambda execution role should have the smallest set of permissions needed. Beginners often start with <code>Resource: '*'</code>, but production services should scope actions to specific queues, topics, tables, or log groups whenever possible.</p><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">provider:
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+          Resource:
+            Fn::GetAtt: [OrdersQueue, Arn]
+        - Effect: Allow
+          Action:
+            - sns:Publish
+          Resource:
+            Ref: OrderEventsTopic
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+          Resource:
+            Fn::GetAtt: [OrdersTable, Arn]</code></pre></div><p><strong>Effect</strong> is usually Allow or Deny. <strong>Action</strong> names API operations. <strong>Resource</strong> scopes where the action applies. Least privilege reduces blast radius if a function is compromised or buggy.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 11?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 11 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-10">← Previous</a><a href="#chapter-12">Next →</a></div></article></section>
+<section class="chapter" id="chapter-12"><article><h2>Chapter 12: Variables and Stages</h2><p>Variables let one configuration adapt to multiple environments. <code>${self:provider.stage}</code> reads another value from the same file. <code>${env:TABLE_NAME}</code> reads a shell environment variable. <code>${opt:stage}</code> reads a command-line option.</p><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">provider:
+  stage: ${opt:stage, &#x27;dev&#x27;}
+  environment:
+    TABLE_NAME: orders-${self:provider.stage}
+custom:
+  alarmEmail: ${env:ALARM_EMAIL, &#x27;dev-team@example.com&#x27;}</code></pre></div><p>Use stages for development, staging, and production. Names, permissions, and alarms should make the active stage obvious. Never let a developer accidentally deploy experimental resources over production names.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 12?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 12 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-11">← Previous</a><a href="#chapter-13">Next →</a></div></article></section>
+<section class="chapter" id="chapter-13"><article><h2>Chapter 13: Complete Production Project</h2><p>This complete project combines API Gateway, Lambda, SNS, SQS, and DynamoDB. The API accepts an order, stores it, publishes an event, and lets independent workers react.</p><div class='diagram'>POST /orders
+   |
+API Gateway HTTP API
+   |
+createOrder Lambda ---- PutItem ----> DynamoDB OrdersTable
+   |
+   +---- Publish OrderCreated ----> SNS OrderEventsTopic
+                                      |
+                         +------------+-------------+
+                         v                          v
+                    EmailQueue                 FulfillmentQueue
+                         |                          |
+                    emailWorker              fulfillmentWorker</div><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-text">order-service/
+├── src/
+│   ├── orders/create.js
+│   ├── orders/get.js
+│   ├── email/worker.js
+│   └── fulfillment/worker.js
+├── serverless.yml
+└── package.json</code></pre></div><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-yaml">service: production-order-service
+frameworkVersion: &#x27;4&#x27;
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: us-east-1
+  stage: ${opt:stage, &#x27;dev&#x27;}
+  architecture: arm64
+  timeout: 10
+  memorySize: 256
+  environment:
+    ORDERS_TABLE: orders-${self:provider.stage}
+    ORDER_TOPIC_ARN:
+      Ref: OrderEventsTopic
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: [dynamodb:PutItem, dynamodb:GetItem, dynamodb:UpdateItem]
+          Resource:
+            Fn::GetAtt: [OrdersTable, Arn]
+        - Effect: Allow
+          Action: [sns:Publish]
+          Resource:
+            Ref: OrderEventsTopic
+functions:
+  createOrder:
+    handler: src/orders/create.handler
+    events:
+      - httpApi:
+          path: /orders
+          method: post
+  getOrder:
+    handler: src/orders/get.handler
+    events:
+      - httpApi:
+          path: /orders/{orderId}
+          method: get
+  emailWorker:
+    handler: src/email/worker.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [EmailQueue, Arn]
+          batchSize: 5
+  fulfillmentWorker:
+    handler: src/fulfillment/worker.handler
+    timeout: 60
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: [FulfillmentQueue, Arn]
+          batchSize: 10
+resources:
+  Resources:
+    OrderEventsTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: order-events-${self:provider.stage}
+    EmailDlq:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: email-dlq-${self:provider.stage}
+    EmailQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: email-queue-${self:provider.stage}
+        VisibilityTimeout: 60
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt: [EmailDlq, Arn]
+          maxReceiveCount: 5
+    FulfillmentDlq:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: fulfillment-dlq-${self:provider.stage}
+    FulfillmentQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: fulfillment-queue-${self:provider.stage}
+        VisibilityTimeout: 180
+        RedrivePolicy:
+          deadLetterTargetArn:
+            Fn::GetAtt: [FulfillmentDlq, Arn]
+          maxReceiveCount: 5
+    EmailSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: OrderEventsTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt: [EmailQueue, Arn]
+    FulfillmentSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        TopicArn:
+          Ref: OrderEventsTopic
+        Protocol: sqs
+        Endpoint:
+          Fn::GetAtt: [FulfillmentQueue, Arn]
+    OrdersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: orders-${self:provider.stage}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: orderId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: orderId
+            KeyType: HASH</code></pre></div><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-javascript">import { DynamoDBClient, PutItemCommand } from &#x27;@aws-sdk/client-dynamodb&#x27;;
+import { SNSClient, PublishCommand } from &#x27;@aws-sdk/client-sns&#x27;;
+import crypto from &#x27;node:crypto&#x27;;
+const dynamodb = new DynamoDBClient({});
+const sns = new SNSClient({});
+export const handler = async (event) =&gt; {
+  const body = JSON.parse(event.body || &#x27;{}&#x27;);
+  const orderId = crypto.randomUUID();
+  await dynamodb.send(new PutItemCommand({
+    TableName: process.env.ORDERS_TABLE,
+    Item: { orderId: { S: orderId }, status: { S: &#x27;PENDING&#x27; } }
+  }));
+  await sns.send(new PublishCommand({
+    TopicArn: process.env.ORDER_TOPIC_ARN,
+    Message: JSON.stringify({ type: &#x27;OrderCreated&#x27;, version: 1, detail: { orderId, items: body.items || [] } }),
+    MessageAttributes: { eventType: { DataType: &#x27;String&#x27;, StringValue: &#x27;OrderCreated&#x27; } }
+  }));
+  return { statusCode: 202, body: JSON.stringify({ orderId, status: &#x27;PENDING&#x27; }) };
+};</code></pre></div><p>Line by line, the service names the deployment, provider sets runtime and stage, environment exposes table and topic names, IAM grants DynamoDB and SNS access, functions define API and worker entry points, and resources create durable infrastructure. The event flow starts synchronously at the API and becomes asynchronous after the topic publish. Deployment is <code>serverless deploy --stage dev</code>, followed by testing the endpoint and watching CloudWatch logs.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 13?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 13 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-12">← Previous</a><a href="#chapter-14">Next →</a></div></article></section>
+<section class="chapter" id="chapter-14"><article><h2>Chapter 14: Deployment</h2><p>Deployment turns local configuration into AWS resources. The framework packages code, uploads artifacts, creates a CloudFormation change set or update, and reports outputs.</p><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-bash">serverless deploy
+serverless info
+serverless logs -f createOrder
+serverless remove</code></pre></div><p><code>serverless deploy</code> creates or updates the stack. <code>serverless info</code> prints endpoints and outputs. <code>serverless logs</code> reads CloudWatch logs for a function. <code>serverless remove</code> deletes the stack; use it carefully because stateful resources may be retained or deleted depending on configuration.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 14?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 14 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-13">← Previous</a><a href="#chapter-15">Next →</a></div></article></section>
+<section class="chapter" id="chapter-15"><article><h2>Chapter 15: Monitoring and Debugging</h2><p>Production serverless systems need observability. CloudWatch Logs show function output. Metrics show errors, duration, throttles, iterator age, queue age, DLQ depth, and topic delivery failures. Structured JSON logs with correlation IDs make event-driven flows traceable across functions.</p><div class="code-wrap"><button class="copy">Copy</button><pre><code class="language-javascript">console.log(JSON.stringify({
+  level: &#x27;info&#x27;,
+  message: &#x27;order accepted&#x27;,
+  orderId,
+  correlationId,
+  eventType: &#x27;OrderCreated&#x27;
+}));</code></pre></div><p>Debugging should follow the event path: API Gateway access logs, Lambda logs, SNS publish metrics, SQS queue depth, worker logs, and database writes. Alarm on symptoms customers feel, such as old messages, high error rates, and DLQ messages.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 15?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 15 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-14">← Previous</a><a href="#chapter-16">Next →</a></div></article></section>
+<section class="chapter" id="chapter-16"><article><h2>Chapter 16: Troubleshooting</h2><p>Common serverless failures are usually configuration mismatches. An invalid ARN means a reference points to the wrong resource or region. Missing permissions mean IAM allowed too little. Lambda timeout means the function exceeded its configured duration. A queue not receiving messages may indicate the producer is publishing to the wrong URL, the subscription policy is missing, or the event filter excludes the message. SNS delivery failures may come from unconfirmed subscriptions, endpoint errors, or missing SQS queue policy. Deployment failures often come from YAML indentation, duplicate names, or CloudFormation replacement constraints.</p><table><thead><tr><th>Issue</th><th>Likely cause</th><th>Fix</th></tr></thead><tbody><tr><td>Invalid ARN</td><td>Wrong stage, region, or reference</td><td>Use <code>Ref</code> or <code>Fn::GetAtt</code> and check outputs</td></tr><tr><td>Access denied</td><td>IAM missing action or resource</td><td>Add least-privilege statement</td></tr><tr><td>Timeout</td><td>Slow downstream or too small timeout</td><td>Optimize, queue work, or adjust timeout</td></tr><tr><td>DLQ growing</td><td>Poison message or code bug</td><td>Inspect payloads, fix consumer, redrive safely</td></tr></tbody></table><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 16?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 16 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-15">← Previous</a><a href="#chapter-17">Next →</a></div></article></section>
+<section class="chapter" id="chapter-17"><article><h2>Chapter 17: Best Practices</h2><p>For functions, use single responsibility, small handlers, shared libraries, explicit input validation, and structured errors. For SQS, configure DLQs, visibility timeouts, batch sizes, idempotency, and alarms. For SNS, use fan-out design, message attributes, filtering, event versioning, and clear contracts. For security, apply least privilege, encrypt sensitive data, use a secrets manager for secrets, and review public endpoints. For cost optimization, tune memory, avoid unnecessary invocations, batch queue work, and monitor idle or failing resources.</p><div class='callout good'><strong>Production mindset:</strong> Every event may be duplicated, delayed, retried, or processed after a deployment. Design for those realities from the beginning.</div><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 17?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 17 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-16">← Previous</a><a href="#chapter-18">Next →</a></div></article></section>
+<section class="chapter" id="chapter-18"><article><h2>Chapter 18: Final Project Exercise</h2><p>Your final exercise is an Order Management System. The system must expose a create order API, publish an SNS event, fan out notifications, push messages to SQS, process orders asynchronously, and store data in DynamoDB.</p><div class='diagram'>Client -> API Gateway -> createOrder Lambda -> DynamoDB PENDING
+                                      |
+                                      v
+                                  SNS Topic
+                                /    |     \
+                               v     v      v
+                         Email Queue Analytics Queue Fulfillment Queue
+                               |     |      |
+                               v     v      v
+                            Workers update logs, metrics, and order status</div><p>Functional requirements: validate request bodies, create an order ID, store initial status, publish <code>OrderCreated</code>, send email asynchronously, update analytics asynchronously, process fulfillment asynchronously, and expose a get order endpoint. Stretch goals: add message filtering, partial batch response, DLQs for every queue, alarms, tracing, a replay script, and a versioned event schema. Suggested steps: create the table, create the topic, create queues, subscribe queues to the topic, implement create and get handlers, implement workers, add IAM, deploy to dev, test with sample payloads, then inspect logs and queue metrics.</p><article class="quiz"><h3>Quick quiz</h3><ol><li>What is the main lesson of chapter 18?<details><summary>Show answer</summary><p>Use configuration, permissions, and operational practices deliberately rather than relying on defaults.</p></details></li></ol></article><aside><h3>Chapter summary</h3><h4>Key Takeaways</h4><ul><li>Chapter 18 adds another production skill to your serverless toolkit.</li><li>The same principles repeat: clear events, least privilege, observability, and safe retries.</li></ul><h4>Common Mistakes</h4><ul><li>Treating serverless as magic instead of managed infrastructure with quotas, permissions, and operational behavior.</li><li>Copying examples without understanding names, stages, regions, and IAM resources.</li></ul><h4>Best Practices</h4><ul><li>Start small, deploy often, observe logs and metrics, and make every asynchronous workflow safe to retry.</li><li>Document event shapes and keep examples close to the code that produces or consumes them.</li></ul></aside><div class="chapter-nav"><a href="#chapter-17">← Previous</a><a href="#chapter-1">Back to start ↑</a></div></article></section>
+
+<section class="chapter" id="appendix-production-notes"><article><h2>Appendix: Production Readiness Checklist</h2>
+<p>This appendix gives you a final review checklist before using the lesson patterns in a real workload. Treat every Lambda handler as a small production service. It needs ownership, logging, metrics, alarms, permissions, deployment history, and rollback strategy. Treat every event as a public contract between systems. Once consumers depend on an event shape, changing field names or meanings can break downstream workflows even if the publisher still deploys successfully. Version event schemas, add optional fields before removing old ones, and communicate changes.</p>
+<p>For Lambda functions, confirm that package size is reasonable, dependencies are actively maintained, timeouts match the trigger, and memory is tested with realistic payloads. Keep SDK clients outside handlers when possible, but do not store customer state in global variables. Validate every external input, including messages from queues and topics, because a compromised or buggy publisher can send malformed data. Prefer explicit error classes and structured logs so operators can distinguish validation failures from dependency failures.</p>
+<p>For SQS queues, configure a dead letter queue, alarm on visible message age, alarm on DLQ message count, and document the redrive process. Check that the visibility timeout is longer than the Lambda timeout plus expected retry overhead. Choose batch size based on work cost and failure isolation. If one bad record should not fail nine good records, implement partial batch responses or handle each record with durable per-record status. Make consumers idempotent by using order IDs, event IDs, conditional writes, or deduplication records.</p>
+<p>For SNS topics, document who publishes, who subscribes, what message attributes exist, and what delivery guarantees each subscriber expects. When using SNS to SQS subscriptions, remember that queues often need policies allowing the topic to send messages. Use filter policies to reduce noise, but keep consumer-side validation. Include correlation IDs so a single order can be followed through the API function, topic publish, queue delivery, worker processing, and database update.</p>
+<p>For security, avoid wildcard permissions in production examples unless there is a documented reason. Scope IAM resources to CloudFormation references. Encrypt data at rest where appropriate. Store sensitive values in a secrets service rather than plain text environment variables. Review API authentication and authorization separately from Lambda code. For cost, watch high retry loops, oversized memory, unnecessary scheduled frequency, and queues that silently accumulate messages. Cost optimization is not just making things cheaper; it is removing waste while preserving reliability.</p>
+<p>Finally, practice failure. Send a malformed message and confirm it reaches a DLQ. Temporarily deny a permission in a development stage and read the error. Increase worker latency and observe queue age. Deploy a new subscriber without changing the publisher. These exercises build intuition and make production incidents less surprising.</p>
+</article></section>
+</main>
+</div>
+<footer>
+  <p>End of lesson. Open this file directly in a browser, print it, or use the table of contents to revisit chapters.</p>
+</footer>
+<script>
+  const progress = document.getElementById('progress');
+  const links = [...document.querySelectorAll('nav a')];
+  const chapters = [...document.querySelectorAll('.chapter')];
+  window.addEventListener('scroll', () => {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    progress.style.width = `${Math.max(0, Math.min(100, scrollY / max * 100))}%`;
+    let current = chapters[0]?.id;
+    for (const ch of chapters) if (ch.getBoundingClientRect().top < 160) current = ch.id;
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${current}`));
+  });
+  document.querySelectorAll('.copy').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const code = btn.parentElement.querySelector('code').innerText;
+      await navigator.clipboard.writeText(code);
+      btn.textContent = 'Copied'; btn.classList.add('done');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done'); }, 1200);
+    });
+  });
+</script>
+</body>
+</html>
